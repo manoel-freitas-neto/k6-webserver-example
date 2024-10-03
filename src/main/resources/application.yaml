@@ -1,0 +1,49 @@
+server:
+  port : 8000
+logentries:
+  token: ~
+logging:
+  level:
+    org:
+      zalando:
+        logbook: INFO
+logbook:
+  exclude:
+    - /health
+    - /metrics
+    - /favicon.ico
+    - /swagger-resources/**
+    - /webjars/**
+    - /v2/api-docs
+    - /swagger-ui.html
+  obfuscate:
+    headers:
+      - Authorization
+      - X-Auth-User
+      - X-Request-Security-Context
+management:
+  endpoints:
+    web:
+      base-path: ~
+      exposure:
+        include: info,health,prometheus
+      path-mapping:
+        prometheus: /metrics
+  endpoint:
+    prometheus:
+      enabled: true
+spring:
+  jackson:
+    date-format: yyyy-MM-dd'T'HH:mm:ssZ
+    mapper:
+      ACCEPT_CASE_INSENSITIVE_ENUMS: true
+  data:
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+creditas-auth:
+  authentication-mode: developer

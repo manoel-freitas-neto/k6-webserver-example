@@ -1,0 +1,23 @@
+apiVersion: apps.creditas.io/v2alpha1
+kind: App
+metadata:
+  name: kotlin-spring-sample
+spec:
+#  hooks:
+#    migrate:
+#      kind: PreRollout
+#      env:
+#        - name: SPRING_PROFILES_ACTIVE
+#          value: dbmigration
+  processes:
+    web:
+      replicas: 1
+#    worker:
+#      kind: Worker
+#      replicas: 1
+  routes:
+    kotlin-spring-sample.stg.creditas.io:
+      paths:
+        - path: /
+          process: web
+      public: false

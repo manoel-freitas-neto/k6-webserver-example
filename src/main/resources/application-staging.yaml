@@ -1,0 +1,5 @@
+creditas-auth:
+  jwks-url: https://api.stg.creditas.io/.well-known/jwks.json
+  authentication-mode: request-security-context
+spring:
+  data:

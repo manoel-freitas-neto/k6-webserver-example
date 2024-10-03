@@ -1,0 +1,58 @@
+name: on-merge
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - v.**
+
+env:
+  cliditas_version: 'v0.10'
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+
+  test-app:
+    uses: ./.github/workflows/test.yaml
+    secrets:
+      ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
+      ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
+
+# uncomment the block below to build the app
+#  build-app:
+#    needs: test-app
+#    uses: ./.github/workflows/build.yaml
+#    secrets:
+#        ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
+#        ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
+#    with:
+#      cliditas-version: $cliditas_version
+
+# uncomment the block below to deploy in staging
+#  deploy-stg:
+#    needs: build-app
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4
+#      - uses: creditas/nucleon-actions/actions/setup-cliditas@v2
+#        with:
+#          env: stg.creditas.io
+#          cliditas-version: $cliditas_version
+#      - run: cliditas deploy -f deploy/stg/cliditas.yaml --channel $GITHUB_REF_NAME --diff --yes
+
+  # uncomment the block below to deploy in staging
+#  deploy-prod:
+#    needs: deploy-stg
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4
+#      - uses: creditas/nucleon-actions/actions/setup-cliditas@v2
+#        with:
+#          env: prod.creditas.io
+#          cliditas-version: $cliditas_version
+#      - run: cliditas push --promote-from 794670448117.dkr.ecr.us-east-1.amazonaws.com
+#      - run: cliditas deploy -f deploy/prod/cliditas.yaml --channel $GITHUB_REF_NAME --diff --yes

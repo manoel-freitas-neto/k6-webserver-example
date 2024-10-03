@@ -1,0 +1,25 @@
+# how to use this file: https://creditas.dev/docs/default/component/developerhub/howto/catalog/
+apiVersion: backstage.io/v1alpha1
+kind: Component #Component, Repository, API
+metadata:
+  name: kotlin-spring-sample
+  description: kotlin-spring-sample Change this description template!
+  annotations:
+    github.com/project-slug: creditas/kotlin-spring-sample
+    creditas.io/expose-type: internal # internal, external
+    creditas.io/url: "https://kotlin-spring-sample.stg.creditas.io/"
+    creditas.io/health-check: "https://kotlin-spring-sample.stg.creditas.io/health"
+    creditas.io/tribe: tribe-engineering
+    creditas.io/squad: cross
+    creditas.io/language: kotlin
+    creditas.io/impact: Low #High, Medium, Low
+    creditas.io/pcn: no #yes, no
+    creditas.io/disaster-recovery: no #yes, no
+  tags:
+    - developerhub
+    - template
+    - kotlin
+spec:
+  type: service #library, service, api
+  lifecycle: production
+  owner: tribe-engineering # according to https://creditas.dev/catalog/default/group/creditas

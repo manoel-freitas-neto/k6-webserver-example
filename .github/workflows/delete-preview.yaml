@@ -1,0 +1,27 @@
+name: Delete Deployment
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+
+env:
+  cliditas_version: 'v0.10'
+
+jobs:
+  remove-channel-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Cliditas
+        uses: creditas/nucleon-actions/actions/setup-cliditas@v2
+        with:
+          env: stg.creditas.io
+          cliditas-version: $cliditas_version
+
+      - run: cliditas delete --app ${{ github.event.repository.name }} --channel ${{ github.head_ref }} --yes

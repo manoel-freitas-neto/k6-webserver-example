@@ -1,0 +1,23 @@
+server:
+  port : 8000
+logentries:
+  token: ~
+logging:
+  level:
+    org:
+      zalando:
+        logbook: TRACE
+management:
+  endpoints:
+    web:
+      base-path: ~
+app:
+  events:
+    auto-startup: false
+
+spring:
+  profiles:
+    active: test
+
+creditas-auth:
+  authentication-mode: developer

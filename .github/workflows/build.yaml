@@ -1,0 +1,46 @@
+name: Build Image
+
+on:
+  workflow_call:
+    secrets:
+      ARTIFACTORY_USERNAME:
+        required: true
+      ARTIFACTORY_PASSWORD:
+        required: true
+    inputs:
+      cliditas-version:
+        required: true
+        type: string
+      branch:
+        required: false
+        type: string
+        default: master
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  build-app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+      - name: Setup Cliditas
+        uses: creditas/nucleon-actions/actions/setup-cliditas@v2
+        with:
+          env: stg.creditas.io
+          cliditas-version: ${{ inputs.cliditas-version }}
+
+      - name: Cliditas Build
+        env:
+          ARTIFACTORY_CONTEXT_URL: ${{ vars.ARTIFACTORY_CONTEXT_URL }}
+          ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
+          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
+        run: |
+          cliditas build --cache-from latest \
+          --build-arg artifactory_contextUrl=$ARTIFACTORY_CONTEXT_URL \
+          --build-arg artifactory_user=$ARTIFACTORY_USERNAME \
+          --build-arg artifactory_password=$ARTIFACTORY_PASSWORD
+          cliditas push

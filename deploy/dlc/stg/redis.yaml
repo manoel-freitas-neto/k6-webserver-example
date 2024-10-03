@@ -1,0 +1,7 @@
+#apiVersion: dlcs.creditas.io/v1alpha1
+#kind: Redis
+#metadata:
+#  name: redis
+#spec:
+#  size: 'cache.t3.micro'
+#  version: '6.x'

@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  kotlin-spring-sample:
+    build:
+      context: .
+      args:
+        artifactory_user: $ORG_GRADLE_PROJECT_artifactory_user
+        artifactory_password: $ORG_GRADLE_PROJECT_artifactory_password
+        artifactory_contextUrl: $ORG_GRADLE_PROJECT_artifactory_contextUrl
+    image: creditas/kotlin-spring-sample
+    hostname: kotlin-spring-sample
+    ports:
+      - "8000:8000"
+    init: true
+
+networks:
+  bankfacil:
+    external: true

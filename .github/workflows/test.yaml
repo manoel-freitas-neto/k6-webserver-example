@@ -1,0 +1,58 @@
+name: test-app
+
+on:
+  workflow_call:
+    secrets:
+      ARTIFACTORY_USERNAME:
+        required: true
+      ARTIFACTORY_PASSWORD:
+        required: true
+
+jobs:
+  dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+          cache: 'gradle'
+      - run: gradle dependencies
+        env:
+          ORG_GRADLE_PROJECT_artifactory_contextUrl: ${{ vars.ARTIFACTORY_CONTEXT_URL }}
+          ORG_GRADLE_PROJECT_artifactory_user: ${{ secrets.ARTIFACTORY_USERNAME }}
+          ORG_GRADLE_PROJECT_artifactory_password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+          cache: 'gradle'
+      - run: gradle detekt
+        env:
+          ORG_GRADLE_PROJECT_artifactory_contextUrl: ${{ vars.ARTIFACTORY_CONTEXT_URL }}
+          ORG_GRADLE_PROJECT_artifactory_user: ${{ secrets.ARTIFACTORY_USERNAME }}
+          ORG_GRADLE_PROJECT_artifactory_password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+
+  test-app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+          cache: 'gradle'
+      - run: gradle test
+        env:
+          ORG_GRADLE_PROJECT_artifactory_contextUrl: ${{ vars.ARTIFACTORY_CONTEXT_URL }}
+          ORG_GRADLE_PROJECT_artifactory_user: ${{ secrets.ARTIFACTORY_USERNAME }}
+          ORG_GRADLE_PROJECT_artifactory_password: ${{ secrets.ARTIFACTORY_PASSWORD }}

@@ -1,0 +1,53 @@
+name: Preview App
+
+on:
+  issue_comment:
+    types: [ "created" ]
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+
+env:
+  cliditas_version: 'v0.10'
+
+jobs:
+  get-branch-info:
+    if: ${{ github.event.issue.pull_request && github.event.comment.body == '/preview' }}
+    runs-on: ubuntu-latest
+    outputs:
+      branch-name: ${{ steps.branch-info.outputs.name }}
+    steps:
+      - name: Get branch name
+        id: branch-info
+        run: |
+          branch_name=$(gh pr view $PR_NO \
+            --repo $REPO \
+            --json headRefName \
+            --jq '.headRefName')
+          echo "name=$branch_name" >> $GITHUB_OUTPUT
+        env:
+          REPO: ${{ github.repository }}
+          PR_NO: ${{ github.event.issue.number }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  build:
+    needs: get-branch-info
+    uses: ./.github/workflows/build.yaml
+    secrets:
+      ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
+      ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
+    with:
+      branch: ${{ needs.get-branch-info.outputs.branch-name }}
+      cliditas-version: $cliditas_version
+
+  create:
+    needs: build
+    uses: creditas/nucleon-actions/.github/workflows/preview-create.yaml@v2
+    with:
+      deploy-trigger: '/preview'
+      cliditas-version: $cliditas_version
+      skip-image-build: true
+      manifest-path: 'deploy/preview/cliditas.yaml'
+    secrets:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

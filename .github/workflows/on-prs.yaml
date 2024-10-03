@@ -1,0 +1,56 @@
+name: on-prs
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+env:
+  cliditas_version: 'v0.10'
+
+permissions:
+  id-token: write
+  contents: write
+  actions: write
+
+jobs:
+  test-app:
+    uses: ./.github/workflows/test.yaml
+    secrets:
+      ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
+      ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
+
+# uncomment the block below to build the app
+#  build-app:
+#    uses: ./.github/workflows/build.yaml
+#    secrets:
+#      ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
+#      ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
+#    with:
+#      branch: ${{ github.head_ref }}
+#      cliditas-version: $cliditas_version
+
+# uncomment the block below to deploy in staging
+#  deploy-stg:
+#    needs: [build-app, test-app]
+#    runs-on: ubuntu-latest
+#    environment: staging
+#    steps:
+#      - uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 0
+#      - name: Check if branch is ahead of master
+#        run: |
+#          if ! git merge-base --is-ancestor origin/master ${{ github.sha }};
+#          then echo "This branch is not up to date with main";
+#          exit 1; fi
+#      - uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1
+#      - uses: actions/checkout@v4
+#        with:
+#          ref: ${{ github.head_ref }}
+#      - uses: creditas/nucleon-actions/actions/setup-cliditas@v2
+#        with:
+#          env: stg.creditas.io
+#          cliditas-version: $cliditas_version
+#      - run: cliditas deploy -f deploy/stg/cliditas.yaml --channel master --diff --yes

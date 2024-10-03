@@ -1,0 +1,9 @@
+#apiVersion: dlcs.creditas.io/v1alpha1
+#kind: Postgres
+#metadata:
+#  name: primary
+#spec:
+#  highAvailable: false
+#  size: "db.t3.micro"
+#  storage: 100
+#  version: '16.1'
